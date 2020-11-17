@@ -36,10 +36,7 @@ class CreateMeetingScreen extends StatelessWidget {
               ],
 
               MeetingButton(
-                onPressed: () {
-                  DatabaseManager db = DB();
-                  db.createMeeting('new meeting');
-                },
+                onPressed: meeting.creatingMeeting ? null : meeting.createMeeting,
                 title: 'Create',
                 color: Style.greenColor,
               )

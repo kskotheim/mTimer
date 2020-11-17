@@ -16,6 +16,21 @@ mixin _$Home on _Home, Store {
           Computed<bool>(() => super.codeIsEmpty, name: '_Home.codeIsEmpty'))
       .value;
 
+  final _$meetingAtom = Atom(name: '_Home.meeting');
+
+  @override
+  Observable<Meeting> get meeting {
+    _$meetingAtom.reportRead();
+    return super.meeting;
+  }
+
+  @override
+  set meeting(Observable<Meeting> value) {
+    _$meetingAtom.reportWrite(value, super.meeting, () {
+      super.meeting = value;
+    });
+  }
+
   final _$stateAtom = Atom(name: '_Home.state');
 
   @override
@@ -106,6 +121,7 @@ mixin _$Home on _Home, Store {
   @override
   String toString() {
     return '''
+meeting: ${meeting},
 state: ${state},
 code: ${code},
 codeIsEmpty: ${codeIsEmpty}

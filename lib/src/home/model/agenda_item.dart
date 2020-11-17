@@ -17,11 +17,11 @@ class AgendaItem {
   AgendaItem.fromMap(Map<String, dynamic> data)
       : minutes = data[ITEM_MINUTES],
         name = data[ITEM_NAME],
-        color = data[COLOR];
+        color = Color(data[COLOR]);
 
   Map<String, dynamic> toMap() => {
     ITEM_MINUTES: minutes,
     ITEM_NAME: name,
-    COLOR: color.toString()
+    COLOR: color.value
   };
 }

@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:meeting_app/src/data/db.dart';
 import 'package:meeting_app/src/home/model/agenda_item.dart';
+import 'package:meeting_app/src/home/store/auth.dart';
 import 'package:meeting_app/src/material/style.dart';
 import 'package:mobx/mobx.dart';
 import 'package:meeting_app/src/home/model/meeting.dart' as model;
@@ -14,7 +16,12 @@ abstract class _Meeting with Store {
   static const MAX_ITEMS = 12;
   static const MAX_ITEM_MINUTES = 60;
   static const MIN_ITEM_MINUTES = 1;
+  final DatabaseManager _db = DB();
   Timer _fastIncrementTimer;
+
+  final Auth auth;
+
+  _Meeting({this.auth});
 
   int get minItemMinutes => MIN_ITEM_MINUTES;
   int get maxItemMinutes => MAX_ITEM_MINUTES;
@@ -23,7 +30,6 @@ abstract class _Meeting with Store {
   void dispose() {
     _fastIncrementTimer.cancel();
   }
-
 
   // OBSERVABLES
 
@@ -41,6 +47,9 @@ abstract class _Meeting with Store {
 
   @observable
   String meetingName = model.Meeting.DEFAULT_TIMER_NAME;
+
+  @observable
+  bool creatingMeeting = false;
 
   // COMPUTED
 
@@ -136,4 +145,10 @@ abstract class _Meeting with Store {
 
   @action
   void updateNewItemName(String name) => newItemName = name;
+
+  @action
+  Future<void> createMeeting() async {
+    creatingMeeting = true;
+    await _db.createMeeting(model.Meeting(items: agendaItems, name: meetingName, creatorId: auth.userId));
+  }
 }

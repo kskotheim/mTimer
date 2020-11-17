@@ -16,16 +16,7 @@ class MeetingAgendaDisplay extends StatelessWidget {
       builder: (_) {
         return Stack(
           children: [
-            Center(
-              // circle display
-              child: SizedBox(
-                width: 150,
-                height: 150,
-                child: CustomPaint(
-                  painter: AgendaPainter(meeting.agendaItems, meeting.totalMeetingTime),
-                ),
-              ),
-            ),
+            PieChart(meeting.agendaItems),
 
             // item names
             SizedBox(
@@ -47,6 +38,7 @@ class MeetingAgendaDisplay extends StatelessWidget {
     );
   }
 }
+
 
 class Descriptions extends StatelessWidget {
   final List<AgendaItem> items;
@@ -124,53 +116,5 @@ class Descriptions extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-class AgendaPainter extends CustomPainter {
-  static const WHEEL_SIZE = 150.0;
-
-  final List<AgendaItem> items;
-  final int totalTime;
-  List<double> ratios;
-  double currentAngle = -pi / 2;
-  Paint outlinePaint = Paint()
-    ..style = PaintingStyle.stroke
-    ..color = Style.bannerColor
-    ..strokeWidth = 2.5;
-
-  AgendaPainter(this.items, this.totalTime) {
-    ratios = items.map((item) => item.minutes / totalTime).toList();
-  }
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    // paint objects for each agenda item
-    final paintObjs = items
-        .map((e) => Paint()
-          ..style = PaintingStyle.fill
-          ..color = e.color)
-        .toList();
-
-    // the center of the circle
-    final center = Offset(size.width * .5, size.height * .5);
-
-    // draw arc for items
-    for (int i = 0; i < items.length; i++) {
-      canvas.drawArc(Rect.fromCenter(center: center, width: WHEEL_SIZE, height: WHEEL_SIZE), currentAngle,
-          ratios[i] * 2 * pi, true, paintObjs[i]);
-      currentAngle += ratios[i] * 2 * pi;
-    }
-
-    // draw '0' line
-    canvas.drawLine(center, Offset(size.width * .5, size.height * .5 - (WHEEL_SIZE * .5)), outlinePaint);
-
-    // draw outline
-    canvas.drawCircle(center, WHEEL_SIZE * .5, outlinePaint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return true;
   }
 }

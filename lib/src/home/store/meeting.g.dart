@@ -134,6 +134,28 @@ mixin _$Meeting on _Meeting, Store {
     });
   }
 
+  final _$creatingMeetingAtom = Atom(name: '_Meeting.creatingMeeting');
+
+  @override
+  bool get creatingMeeting {
+    _$creatingMeetingAtom.reportRead();
+    return super.creatingMeeting;
+  }
+
+  @override
+  set creatingMeeting(bool value) {
+    _$creatingMeetingAtom.reportWrite(value, super.creatingMeeting, () {
+      super.creatingMeeting = value;
+    });
+  }
+
+  final _$createMeetingAsyncAction = AsyncAction('_Meeting.createMeeting');
+
+  @override
+  Future<void> createMeeting() {
+    return _$createMeetingAsyncAction.run(() => super.createMeeting());
+  }
+
   final _$_MeetingActionController = ActionController(name: '_Meeting');
 
   @override
@@ -254,6 +276,7 @@ newItemColor: ${newItemColor},
 agendaItems: ${agendaItems},
 newItemName: ${newItemName},
 meetingName: ${meetingName},
+creatingMeeting: ${creatingMeeting},
 newItemNameNotEmpty: ${newItemNameNotEmpty},
 firstItems: ${firstItems},
 secondItems: ${secondItems},

@@ -1,13 +1,32 @@
+import 'package:meeting_app/src/data/db.dart';
+import 'package:meeting_app/src/home/model/meeting.dart';
+import 'package:meeting_app/src/home/store/auth.dart';
 import 'package:mobx/mobx.dart';
 
 part 'home.g.dart';
 
 class Home = _Home with _$Home;
 
-enum HomeState {home, connect, create}
+enum HomeState { home, connect, create, meet }
 
 abstract class _Home with Store {
-  
+  final Auth auth;
+  final DatabaseManager _db = DB();
+
+  _Home({this.auth}) {
+    _db.userMeeting(auth.userId).listen(
+      (event) {
+        if (event != null) {
+          meeting.value = event;
+          state = HomeState.meet;
+        }
+      },
+    );
+  }
+
+  @observable
+  Observable<Meeting> meeting = Observable<Meeting>(null);
+
   // connect to meeting observables + actions
   @observable
   var state = HomeState.home;
@@ -24,16 +43,13 @@ abstract class _Home with Store {
   @action
   void cancelEnterCode() => state = HomeState.home;
 
-
-  // create meeting observables + actions
+  // create meeting actions
 
   @action
   void createMeetingPressed() => state = HomeState.create;
 
   @action
   void cancelCreateMeeting() => state = HomeState.home;
-
-
 
   @action
   void process(str) {
@@ -72,11 +88,12 @@ abstract class _Home with Store {
         if (code.length > 0) code = code.substring(0, code.length - 1);
         break;
       case 'x':
-      code = '';
-      cancelEnterCode();
+        code = '';
+        cancelEnterCode();
         break;
       default:
-      print('error');
+        print('error');
     }
   }
+
 }
